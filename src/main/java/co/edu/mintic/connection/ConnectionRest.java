@@ -6,7 +6,8 @@ import java.net.URL;
 public class ConnectionRest {
 
 	private URL url = null;
-	private static String sitio = "http://localhost:5000/";
+	//private static String sitio = "http://localhost:5000/";
+	private static String sitio = "http://ec2-34-226-143-126.compute-1.amazonaws.com:8080/TiendaLaGenericaNacional-0.0.1-SNAPSHOT/";
 	private static HttpURLConnection httpCon = null;
 
 	public ConnectionRest(String path) {

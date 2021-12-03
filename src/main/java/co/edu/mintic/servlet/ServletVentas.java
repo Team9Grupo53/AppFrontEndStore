@@ -157,7 +157,7 @@ public class ServletVentas extends HttpServlet {
 					&& !((String) request.getParameter("cedulaCliente")).isEmpty()) {
 				try {
 					ven.setCliente((ClienteDTO) ctrlC
-							.buscarById(Integer.parseInt((String) request.getParameter("cedulaCliente"))));
+							.buscarById(Integer.parseInt((String) request.getParameter("cedulaCliente")),((UsuariosDTO)request.getSession().getAttribute("usrLog")).getToken()));
 				} catch (Exception e) {
 					throw new Exception("Error al buscar el cliente");
 				}

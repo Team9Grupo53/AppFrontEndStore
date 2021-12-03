@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import co.edu.mintic.controlador.ClienteCtrl;
 import co.edu.mintic.dto.ClienteDTO;
+import co.edu.mintic.dto.UsuariosDTO;
 
 @WebServlet("/AdminClientes")
 public class ServletCliente extends HttpServlet {
@@ -35,7 +36,7 @@ public class ServletCliente extends HttpServlet {
 		if (request.getParameter("Listar") != null) {
 
 			try {
-				request.setAttribute("listaCliente", ctrl.listar());
+				request.setAttribute("listaCliente", ctrl.listar(((UsuariosDTO)request.getSession().getAttribute("usrLog")).getToken()));
 			} catch (Exception e) {
 				System.out.println("Error en listando los Clientes:>" + e.getMessage());
 				request.setAttribute("msnErr", "Error en listando de los Clientes");
@@ -46,7 +47,7 @@ public class ServletCliente extends HttpServlet {
 				try {
 					if (request.getParameter("cedula") != null && !request.getParameter("cedula").equals("")) {
 						cli = obtenerDatosForm(request);
-						cli = (ClienteDTO) ctrl.buscarById(cli.getCedula());
+						cli = (ClienteDTO) ctrl.buscarById(cli.getCedula(),((UsuariosDTO)request.getSession().getAttribute("usrLog")).getToken());
 						System.out.println("cli:>" + cli);
 						if (cli != null) {
 							request.setAttribute("cli", cli);
@@ -80,8 +81,9 @@ public class ServletCliente extends HttpServlet {
 				if (valiadarObligatorio(request)) {
 					cli = obtenerDatosForm(request);
 					try {
-
-						if (ctrl.buscarById(cli.getCedula()) != null) {
+						ClienteDTO cli2 = (ClienteDTO) ctrl.buscarById(cli.getCedula(),((UsuariosDTO)request.getSession().getAttribute("usrLog")).getToken());
+						if ( cli2 != null) {
+							cli.setId(cli2.getId());
 							ctrl.actualizar(cli);
 							request.setAttribute("msnOK", "Cliente modificado con Exito");
 						} else {
@@ -99,8 +101,9 @@ public class ServletCliente extends HttpServlet {
 				if (request.getParameter("cedula") != null && !request.getParameter("cedula").equals("")) {
 					cli = obtenerDatosForm(request);
 					try {
-
-						if (ctrl.buscarById(cli.getCedula()) != null) {
+						cli = (ClienteDTO) ctrl.buscarById(cli.getCedula(),((UsuariosDTO)request.getSession().getAttribute("usrLog")).getToken());
+						if ( cli != null) {
+							cli.setToken(((UsuariosDTO)request.getSession().getAttribute("usrLog")).getToken());
 							ctrl.eliminar(cli);
 							request.setAttribute("msnOK", "Cliente eliminado con exito");
 						} else {
@@ -141,6 +144,7 @@ public class ServletCliente extends HttpServlet {
 		cli.setEmail((String) request.getParameter("email"));
 		cli.setNombre((String) request.getParameter("nombre"));
 		cli.setTelefono((String) request.getParameter("telefono"));
+		cli.setToken(((UsuariosDTO)request.getSession().getAttribute("usrLog")).getToken());
 		return cli;
 	}
 

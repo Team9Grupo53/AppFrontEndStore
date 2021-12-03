@@ -42,6 +42,8 @@
 									<input id="cedula-txt" class="form-control"
 										placeholder="Ingrese la Cedula" type="number" name="cedula"
 										value="<%=request.getAttribute("usr") != null ? ((UsuariosDTO) request.getAttribute("usr")).getCedula() : ""%>">
+									<input id="id-txt" class="form-control" type="hidden" name="id"
+										value="<%=request.getAttribute("usr") != null ? ((UsuariosDTO) request.getAttribute("usr")).getId() : ""%>">
 								</div>
 							</div>
 							<div class="mb-3 row">
@@ -124,7 +126,7 @@
 									<td><%=usr.getNombre()%></td>
 									<td><%=usr.getEmail()%></td>
 									<td><%=usr.getUsuario()%></td>
-									<td><%=usr.getPassword()%></td>									
+									<td>*********</td>
 								</tr>
 								<%
 								}

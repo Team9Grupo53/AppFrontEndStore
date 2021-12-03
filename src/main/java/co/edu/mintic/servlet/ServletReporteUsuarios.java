@@ -49,11 +49,10 @@ public class ServletReporteUsuarios extends HttpServlet {
 		protected void doPost(HttpServletRequest request, HttpServletResponse response)
 				throws ServletException, IOException {
 			RequestDispatcher rd = null;
-			UsuariosDTO usr = null;
 			if (request.getParameter("Listar") != null) {
 
 				try {
-					request.setAttribute("listaUsuario", ctrl.listar());
+					request.setAttribute("listaUsuario", ctrl.listar(((UsuariosDTO)request.getSession().getAttribute("usrLog")).getToken()));
 				} catch (Exception e) {
 					System.out.println("Error listando los Usuarios::>" + e.getMessage());
 					request.setAttribute("msnErr", "Error listando los Usuarios");

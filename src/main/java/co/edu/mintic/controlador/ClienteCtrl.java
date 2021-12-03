@@ -2,6 +2,7 @@ package co.edu.mintic.controlador;
 
 import java.util.List;
 
+import co.edu.mintic.dto.TokenDTO;
 import co.edu.mintic.mediador.ClienteMed;
 
 
@@ -21,12 +22,12 @@ public class ClienteCtrl {
 		med.crear(obj);
 	}
 	
-	public List<Object> listar() throws Exception{
-    	return med.listar();
+	public List<Object> listar(TokenDTO tk) throws Exception{
+    	return med.listar(tk);
     }
 	
-	public Object buscarById(int id) throws Exception{
-    	return med.buscarById(id);
+	public Object buscarById(int id,TokenDTO tk) throws Exception{
+    	return med.buscarById(id,tk);
     }
 	
 	public void actualizar(Object obj) throws Exception{

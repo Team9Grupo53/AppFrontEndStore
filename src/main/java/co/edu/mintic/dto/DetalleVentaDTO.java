@@ -2,10 +2,10 @@ package co.edu.mintic.dto;
 
 import java.io.Serializable;
 
-
 public class DetalleVentaDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+	private String id;
 	private Long codDetalleVenta;
 	private Long codVenta;
 	private int cantProducto;
@@ -72,22 +72,28 @@ public class DetalleVentaDTO implements Serializable {
 	public void setCodVenta(long codVenta) {
 		this.codVenta = codVenta;
 	}
-	
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	@Override
 	public String toString() {
 		String str = "{ ";
-				if(codDetalleVenta != null) {
-					str+= " \"codigoDetalleVenta\":"+codDetalleVenta+", ";
-				}
-				str+= " \"cantidadProducto\":"+cantProducto+", "
-				+ "\"valorIva\":"+valorIva+", "
-				+ "\"valorTotal\":"+valorTotal+", "
-				+ "\"valorVenta\":"+valorVenta+", "
-				+ "\"producto\": "+producto+", "
-				+ "\"venta\": {"
-				+ "              \"codigoVenta\": "+codVenta+" "
-				+ "           } "
-				+ "}";
+		if (codDetalleVenta != null) {
+			str += " \"codigoDetalleVenta\":" + codDetalleVenta + ", ";
+		}
+		str += " \"cantidadProducto\":" + cantProducto + ", " + "\"valorIva\":" + valorIva + ", " + "\"valorTotal\":"
+				+ valorTotal + ", " + "\"valorVenta\":" + valorVenta + ", " + "\"producto\": " + producto + ", "
+				+ "\"venta\": {" + "              \"codigoVenta\": " + codVenta + " " + "           } ";
+		if (id != null)
+			str += "   ,\"id\":" + id + " ";
+		str += " } ";
+
 		return str;
 	}
 

@@ -10,6 +10,7 @@ public class ReporteVentasDTO implements Serializable  {
 	private long cedulaCliente;
 	private String nombreCliente;
 	private double totalVenta;
+	private TokenDTO token;
 	
 	
 	
@@ -47,6 +48,15 @@ public class ReporteVentasDTO implements Serializable  {
 	public void setTotalVenta(double totalVenta) {
 		this.totalVenta = totalVenta;
 	}
+
+	public TokenDTO getToken() {
+		return token;
+	}
+
+	public void setToken(TokenDTO token) {
+		this.token = token;
+	}
+	
 	
 	
 	

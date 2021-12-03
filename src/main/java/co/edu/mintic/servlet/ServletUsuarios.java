@@ -36,9 +36,9 @@ public class ServletUsuarios extends HttpServlet {
 			throws ServletException, IOException {
 
 		RequestDispatcher rd = null;
-		if(request.getSession().getAttribute("usrLog") != null) {
+		if (request.getSession().getAttribute("usrLog") != null) {
 			rd = request.getRequestDispatcher("usuarios/frontUsuario.jsp");
-		}else {
+		} else {
 			request.setAttribute("msnErr", "Debe realizar el Login!");
 			rd = request.getRequestDispatcher("./Login");
 		}
@@ -56,7 +56,8 @@ public class ServletUsuarios extends HttpServlet {
 		if (request.getParameter("Listar") != null) {
 
 			try {
-				request.setAttribute("listaUsuario", ctrl.listar());
+				request.setAttribute("listaUsuario",
+						ctrl.listar(((UsuariosDTO) request.getSession().getAttribute("usrLog")).getToken()));
 			} catch (Exception e) {
 				System.out.println("Error listando los Usuarios::>" + e.getMessage());
 				request.setAttribute("msnErr", "Error listando los Usuarios");
@@ -67,12 +68,14 @@ public class ServletUsuarios extends HttpServlet {
 				try {
 					if (request.getParameter("cedula") != null && !request.getParameter("cedula").equals("")) {
 						usr = obtenerDatosForm(request);
-						usr = (UsuariosDTO) ctrl.buscarById(usr.getCedula());
-						System.out.println("usr:::>"+usr);
+						usr = (UsuariosDTO) ctrl.buscarById(usr.getCedula(),
+								((UsuariosDTO) request.getSession().getAttribute("usrLog")).getToken());
+						System.out.println("usr:::>" + usr);
 						if (usr != null) {
 							request.setAttribute("usr", usr);
-						}else {
-							request.setAttribute("msnErr", "No se encontraron datos de usuario para la cedula ingresada");
+						} else {
+							request.setAttribute("msnErr",
+									"No se encontraron datos de usuario para la cedula ingresada");
 						}
 					} else {
 						request.setAttribute("msnErr", "La cedula del usuario es requerida");
@@ -102,7 +105,8 @@ public class ServletUsuarios extends HttpServlet {
 					usr = obtenerDatosForm(request);
 					try {
 
-						if (ctrl.buscarById(usr.getCedula()) != null) {
+						if (ctrl.buscarById(usr.getCedula(),
+								((UsuariosDTO) request.getSession().getAttribute("usrLog")).getToken()) != null) {
 							ctrl.actualizar(usr);
 							request.setAttribute("msnOK", "Usuario Modificado con Exito");
 						} else {
@@ -120,8 +124,9 @@ public class ServletUsuarios extends HttpServlet {
 				if (request.getParameter("cedula") != null && !request.getParameter("cedula").equals("")) {
 					usr = obtenerDatosForm(request);
 					try {
-
-						if (ctrl.buscarById(usr.getCedula()) != null) {
+						usr = (UsuariosDTO) ctrl.buscarById(usr.getCedula(),((UsuariosDTO) request.getSession().getAttribute("usrLog")).getToken());
+						if (usr != null) {
+							usr.setToken(((UsuariosDTO) request.getSession().getAttribute("usrLog")).getToken());
 							ctrl.eliminar(usr);
 							request.setAttribute("msnOK", "Usuario Eliminado con Exito");
 						} else {
@@ -158,10 +163,12 @@ public class ServletUsuarios extends HttpServlet {
 	private UsuariosDTO obtenerDatosForm(HttpServletRequest request) {
 		UsuariosDTO usr = new UsuariosDTO();
 		usr.setCedula(Integer.parseInt((String) request.getParameter("cedula")));
+		usr.setId((String) request.getParameter("id"));
 		usr.setEmail((String) request.getParameter("email"));
 		usr.setNombre((String) request.getParameter("nombre"));
 		usr.setPassword((String) request.getParameter("passAdd"));
 		usr.setUsuario((String) request.getParameter("userlog"));
+		usr.setToken(((UsuariosDTO) request.getSession().getAttribute("usrLog")).getToken());
 		return usr;
 	}
 

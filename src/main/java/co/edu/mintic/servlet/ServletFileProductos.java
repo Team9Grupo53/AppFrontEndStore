@@ -17,6 +17,8 @@ import javax.servlet.http.Part;
 import co.edu.mintic.controlador.ProductosCtrl;
 import co.edu.mintic.controlador.ProveedorCtrl;
 import co.edu.mintic.dto.ProductosDTO;
+import co.edu.mintic.dto.TokenDTO;
+import co.edu.mintic.dto.UsuariosDTO;
 
 /**
  * Servlet implementation class FilePrueba2
@@ -51,9 +53,9 @@ public class ServletFileProductos extends HttpServlet {
 		return nameFile.toUpperCase().endsWith("CSV");
 	}
 
-	private boolean validateNitProveedor(String nitProveedor) {
+	private boolean validateNitProveedor(String nitProveedor, TokenDTO tk) {
 		try {
-			if (ctrlProve.buscarById(Integer.parseInt(nitProveedor)) != null) {
+			if (ctrlProve.buscarById(Integer.parseInt(nitProveedor),tk) != null) {
 				return true;
 			}
 		} catch (Exception e) {
@@ -67,7 +69,7 @@ public class ServletFileProductos extends HttpServlet {
 
 		campos = line.split(",");
 
-		if (validateNitProveedor(campos[2])) {
+		if (validateNitProveedor(campos[2],((UsuariosDTO)request.getSession().getAttribute("usrLog")).getToken())) {
 			try {
 				ProductosDTO prod = new ProductosDTO();
 				prod.setCodigoProducto(Integer.parseInt(campos[0]));

@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import co.edu.mintic.controlador.ProveedorCtrl;
 import co.edu.mintic.dto.ProveedoresDTO;
+import co.edu.mintic.dto.UsuariosDTO;
 
 @WebServlet("/AdminProveedores")
 public class ServletProveedores extends HttpServlet {
@@ -35,7 +36,7 @@ public class ServletProveedores extends HttpServlet {
 		if (request.getParameter("Listar") != null) {
 
 			try {
-				request.setAttribute("listaProveedor", ctrl.listar());
+				request.setAttribute("listaProveedor", ctrl.listar(((UsuariosDTO)request.getSession().getAttribute("usrLog")).getToken()));
 			} catch (Exception e) {
 				System.out.println("Error en listando los proveedores:>" + e.getMessage());
 				request.setAttribute("msnErr", "Error en listando de los proveedores");
@@ -46,7 +47,7 @@ public class ServletProveedores extends HttpServlet {
 				try {
 					if (request.getParameter("nit") != null && !request.getParameter("nit").equals("")) {
 						pro = obtenerDatosForm(request);
-						pro = (ProveedoresDTO) ctrl.buscarById(pro.getNit());
+						pro = (ProveedoresDTO) ctrl.buscarById(pro.getNit(),((UsuariosDTO)request.getSession().getAttribute("usrLog")).getToken());
 						System.out.println("pro:>" + pro);
 						if (pro != null) {
 							request.setAttribute("pro", pro);
@@ -80,8 +81,9 @@ public class ServletProveedores extends HttpServlet {
 				if (valiadarObligatorio(request)) {
 					pro = obtenerDatosForm(request);
 					try {
-
-						if (ctrl.buscarById(pro.getNit()) != null) {
+						ProveedoresDTO pro2 = (ProveedoresDTO) ctrl.buscarById(pro.getNit(),((UsuariosDTO)request.getSession().getAttribute("usrLog")).getToken());
+						if (pro2 != null) {
+							pro.setId(pro2.getId());
 							ctrl.actualizar(pro);
 							request.setAttribute("msnOK", "Proveedor modificado con Exito");
 						} else {
@@ -99,8 +101,9 @@ public class ServletProveedores extends HttpServlet {
 				if (request.getParameter("nit") != null && !request.getParameter("nit").equals("")) {
 					pro = obtenerDatosForm(request);
 					try {
-
-						if (ctrl.buscarById(pro.getNit()) != null) {
+						pro = (ProveedoresDTO) ctrl.buscarById(pro.getNit(),((UsuariosDTO)request.getSession().getAttribute("usrLog")).getToken());
+						if (pro != null) {
+							pro.setToken(((UsuariosDTO)request.getSession().getAttribute("usrLog")).getToken());
 							ctrl.eliminar(pro);
 							request.setAttribute("msnOK", "Proveedor eliminado con exito");
 						} else {
@@ -141,6 +144,7 @@ public class ServletProveedores extends HttpServlet {
 		pro.setDireccion((String) request.getParameter("direccion"));
 		pro.setNombre((String) request.getParameter("nombre"));
 		pro.setTelefono((String) request.getParameter("telefono"));
+		pro.setToken(((UsuariosDTO)request.getSession().getAttribute("usrLog")).getToken());
 		return pro;
 	}
 

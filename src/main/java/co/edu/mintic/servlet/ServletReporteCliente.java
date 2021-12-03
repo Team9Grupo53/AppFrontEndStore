@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import co.edu.mintic.controlador.ClienteCtrl;
 import co.edu.mintic.dto.ClienteDTO;
+import co.edu.mintic.dto.UsuariosDTO;
 
 @WebServlet("/ReporteClientes")
 public class ServletReporteCliente extends HttpServlet {
@@ -35,7 +36,7 @@ public class ServletReporteCliente extends HttpServlet {
 		if (request.getParameter("Listar") != null) {
 
 			try {
-				request.setAttribute("listaCliente", ctrl.listar());
+				request.setAttribute("listaCliente", ctrl.listar(((UsuariosDTO)request.getSession().getAttribute("usrLog")).getToken()));
 			} catch (Exception e) {
 				System.out.println("Error en listando los Clientes:>" + e.getMessage());
 				request.setAttribute("msnErr", "Error en listando de los Clientes");

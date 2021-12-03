@@ -7,6 +7,7 @@ import java.util.List;
 public class VentaDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+	private String id;
 	private long codVenta;
 	private double ivaVenta;
 	private double totalVenta;
@@ -14,6 +15,7 @@ public class VentaDTO implements Serializable {
 	private List<DetalleVentaDTO> listDetalleVentas;
 	private ClienteDTO cliente;
 	private UsuariosDTO usuario;
+	private TokenDTO token;
 
 	public VentaDTO() {
 	}
@@ -84,6 +86,32 @@ public class VentaDTO implements Serializable {
 	public void setUsuario(UsuariosDTO usuario) {
 		this.usuario = usuario;
 	}
+	
+	
+
+	public String getId() {
+		return id;
+	}
+
+
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+
+
+	public TokenDTO getToken() {
+		return token;
+	}
+
+
+
+	public void setToken(TokenDTO token) {
+		this.token = token;
+	}
+
+
 
 	@Override
 	public String toString() {

@@ -56,12 +56,17 @@ public class ServletLogin extends HttpServlet {
 				request.getSession().setAttribute("usrLog", usr);
 				rd = request.getRequestDispatcher("principal.jsp");				
 			} else {
+				request.getSession().invalidate();
 				request.setAttribute("msnErr", "Usuario/Password Erroneo!");
 				rd = request.getRequestDispatcher("./");
 			}
 			rd.forward(request, response);
 		} catch (Exception e) {
-			e.printStackTrace();
+			request.setAttribute("msnErr", "Usuario/Password Erroneo!");
+			request.getSession().invalidate();
+			rd = request.getRequestDispatcher("./");
+			rd.forward(request, response);
+			System.err.println("Error de login de usuario::>" + e.getMessage());
 		}
 
 		// response.sendRedirect(request.getContextPath() + "/index.html");
