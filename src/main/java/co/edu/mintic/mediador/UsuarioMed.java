@@ -115,7 +115,8 @@ public class UsuarioMed {
 			
 			System.out.println("httpCon.getResponseCode()::>" + httpCon.getResponseCode());
 			if(httpCon.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND || httpCon.getResponseCode() == HttpURLConnection.HTTP_NO_CONTENT) {
-			   return null;
+			   System.out.println("No encontrados:::");
+				return null;
 			}
 			
 			InputStream respuesta = httpCon.getInputStream();
