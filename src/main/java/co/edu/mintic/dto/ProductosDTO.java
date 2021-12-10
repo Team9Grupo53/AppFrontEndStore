@@ -82,11 +82,11 @@ public class ProductosDTO implements java.io.Serializable {
 
 	@Override
 	public String toString() {
-		String res = " {\"codigoProducto\":" + codigoProducto + ",\"ivaCompra\":" + ivaCompra + ",\"nombreProducto\":\""
-				+ nombreProducto + "\",\"precioCompra\":" + precioCompra + ",\"precioVenta\":" + precioVenta
-				+ ",\"proveedor\":{\"nitProveedor\":" + nitProveedor + "} ";
+		String res = " {\"productCode\":\"" + codigoProducto + "\",\"iva_item\":\"" + ivaCompra + "\",\"productName\":\""
+				+ nombreProducto + "\",\"pricePurchase\":\"" + precioCompra + "\",\"priceToBuy\":\"" + precioVenta
+				+ "\",\"nitSupplier\":\"" + nitProveedor + "\" ";
 		if (id != null)
-			res += "   ,\"id\":" + id + " ";
+			res += "   ,\"id\":\"" + id + "\" ";
 		res += " }";
 		return res;
 	}

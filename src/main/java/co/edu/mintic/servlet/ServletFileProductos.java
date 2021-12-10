@@ -68,17 +68,21 @@ public class ServletFileProductos extends HttpServlet {
 		String[] campos = null;
 
 		campos = line.split(",");
+		
+		System.out.println("Campos::>"+campos[2]);
 
 		if (validateNitProveedor(campos[2],((UsuariosDTO)request.getSession().getAttribute("usrLog")).getToken())) {
 			try {
+				System.out.println("Campos IIIIIIF::>"+campos[0]);
 				ProductosDTO prod = new ProductosDTO();
 				prod.setCodigoProducto(Integer.parseInt(campos[0]));
 				prod.setNombreProducto(campos[1]);
 				prod.setNitProveedor(Integer.parseInt(campos[2]));
 				prod.setPrecioCompra(Double.parseDouble(campos[3]));
 				prod.setIvaCompra(Double.parseDouble(campos[4]));
-				prod.setPrecioVenta(Double.parseDouble(campos[5]));				
-				ctrl.actualizar(prod);
+				prod.setPrecioVenta(Double.parseDouble(campos[5]));	
+				prod.setToken(((UsuariosDTO)request.getSession().getAttribute("usrLog")).getToken());
+				ctrl.crear(prod);
 				
 			} catch (Exception e) {
 				System.err.println("Error al procesar las lineas del archivo::>" + e.getMessage());

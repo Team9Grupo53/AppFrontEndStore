@@ -130,6 +130,8 @@ public class ProveedorMed {
 	public void crear(Object proveedor) throws Exception {
 
 		try {
+			System.out.println("((ProveedoresDTO)proveedor).getNit()::>"+((ProveedoresDTO)proveedor).getNit());
+			System.out.println("((ProveedoresDTO)proveedor).getToken()::>"+((ProveedoresDTO)proveedor).getToken());
 			if (buscarById(((ProveedoresDTO)proveedor).getNit(),((ProveedoresDTO)proveedor).getToken()) == null) {
 				httpCon = (HttpURLConnection) ConnectionRest.getConnection("api/supplier/");
 				httpCon.setRequestMethod("POST");
@@ -139,6 +141,7 @@ public class ProveedorMed {
 				httpCon.setRequestProperty("Authorization", ((ProveedoresDTO)proveedor).getToken().getBearer() +" "+((ProveedoresDTO)proveedor).getToken().getToken());
 				
 				String data = ((ProveedoresDTO) proveedor).toString();
+				System.out.println("Data agregar::>"+data);
 				byte[] out = data.getBytes(StandardCharsets.UTF_8);
 				OutputStream stream = httpCon.getOutputStream();
 				stream.write(out);

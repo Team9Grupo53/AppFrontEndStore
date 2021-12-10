@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import co.edu.mintic.controlador.ProductosCtrl;
 import co.edu.mintic.dto.ProductosDTO;
+import co.edu.mintic.dto.UsuariosDTO;
 
 /**
  * Servlet implementation class productos
@@ -50,7 +51,7 @@ public class ServletProductos extends HttpServlet {
 		if (request.getParameter("Listar") != null) {
 
 			try {
-				request.setAttribute("listaProducto", ctrl.listar());
+				request.setAttribute("listaProducto", ctrl.listar(((UsuariosDTO)request.getSession().getAttribute("usrLog")).getToken()));
 			} catch (Exception e) {
 				System.out.println("Error listando los productos::>" + e.getMessage());
 				request.setAttribute("msnErr", "Error listando los productos");
@@ -62,7 +63,7 @@ public class ServletProductos extends HttpServlet {
 					if (request.getParameter("codigoProducto") != null && !request.getParameter("codigoProducto").equals("")) {
 						usr = new ProductosDTO ();
 						usr.setCodigoProducto(Integer.parseInt(request.getParameter("codigoProducto")));
-						usr = (ProductosDTO) ctrl.buscarById(usr.getCodigoProducto());
+						usr = (ProductosDTO) ctrl.buscarById(usr.getCodigoProducto(),((UsuariosDTO)request.getSession().getAttribute("usrLog")).getToken());
 						System.out.println("usr:::>"+usr);
 						if (usr != null) {
 							request.setAttribute("usr", usr);
@@ -96,8 +97,9 @@ public class ServletProductos extends HttpServlet {
 				if (valiadarObligatorio(request)) {
 					usr = obtenerDatosForm(request);
 					try {
-
-						if (ctrl.buscarById(usr.getCodigoProducto()) != null) {
+						ProductosDTO prod = (ProductosDTO) ctrl.buscarById(usr.getCodigoProducto(),((UsuariosDTO)request.getSession().getAttribute("usrLog")).getToken()) ;
+						if (prod!= null) {
+							usr.setId(prod.getId());
 							ctrl.actualizar(usr);
 							request.setAttribute("msnOK", "Producto Modificado con Exito");
 						} else {
@@ -116,9 +118,10 @@ public class ServletProductos extends HttpServlet {
 				if (request.getParameter("codigoProducto") != null && !request.getParameter("codigoProducto").equals("")) {
 					
 					try {
-						usr =  (ProductosDTO)ctrl.buscarById(Integer.parseInt(request.getParameter("codigoProducto")));
+						usr =  (ProductosDTO)ctrl.buscarById(Integer.parseInt(request.getParameter("codigoProducto")),((UsuariosDTO)request.getSession().getAttribute("usrLog")).getToken());
 
 						if (usr != null) {
+							usr.setToken(((UsuariosDTO)request.getSession().getAttribute("usrLog")).getToken());
 							ctrl.eliminar(usr);
 							request.setAttribute("msnOK", "Producto Eliminado con Exito");
 						} else {
@@ -161,6 +164,7 @@ public class ServletProductos extends HttpServlet {
 		usr.setNombreProducto((String) request.getParameter("nombreProducto"));
 		usr.setPrecioCompra(Double.parseDouble((String) request.getParameter("precioCompra")));
 		usr.setPrecioVenta(Double.parseDouble((String) request.getParameter("precioVenta")));
+		usr.setToken(((UsuariosDTO)request.getSession().getAttribute("usrLog")).getToken());
 		return usr;
 	}
 

@@ -182,7 +182,7 @@ public class ServletVentas extends HttpServlet {
 
 				ProductosDTO productosDTO;
 				try {
-					productosDTO = (ProductosDTO) ctrlP.buscarById(Integer.parseInt(codProdS));
+					productosDTO = (ProductosDTO) ctrlP.buscarById(Integer.parseInt(codProdS),((UsuariosDTO)request.getSession().getAttribute("usrLog")).getToken());
 					detalleVenta.setProducto(productosDTO);
 				} catch (Exception e) {
 					throw new Exception("Error al buscar el producto de la fila " + (i + 1));

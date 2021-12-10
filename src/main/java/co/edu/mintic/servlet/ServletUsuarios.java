@@ -104,9 +104,10 @@ public class ServletUsuarios extends HttpServlet {
 				if (valiadarObligatorio(request)) {
 					usr = obtenerDatosForm(request);
 					try {
-
-						if (ctrl.buscarById(usr.getCedula(),
-								((UsuariosDTO) request.getSession().getAttribute("usrLog")).getToken()) != null) {
+						UsuariosDTO usr2 = (UsuariosDTO) ctrl.buscarById(usr.getCedula(),
+								((UsuariosDTO) request.getSession().getAttribute("usrLog")).getToken()) ;
+						if (usr2 != null) {
+							usr.setId(usr2.getId());
 							ctrl.actualizar(usr);
 							request.setAttribute("msnOK", "Usuario Modificado con Exito");
 						} else {
@@ -163,9 +164,9 @@ public class ServletUsuarios extends HttpServlet {
 	private UsuariosDTO obtenerDatosForm(HttpServletRequest request) {
 		UsuariosDTO usr = new UsuariosDTO();
 		usr.setCedula(Integer.parseInt((String) request.getParameter("cedula")));
-		usr.setId((String) request.getParameter("id"));
+		//usr.setId((String) request.getParameter("id"));
 		usr.setEmail((String) request.getParameter("email"));
-		usr.setNombre((String) request.getParameter("nombre"));
+		usr.setNombre((String) request.getParameter("nombre")); 
 		usr.setPassword((String) request.getParameter("passAdd"));
 		usr.setUsuario((String) request.getParameter("userlog"));
 		usr.setToken(((UsuariosDTO) request.getSession().getAttribute("usrLog")).getToken());

@@ -14,17 +14,19 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import co.edu.mintic.connection.ConnectionRest;
+import co.edu.mintic.dto.ClienteDTO;
 import co.edu.mintic.dto.ProductosDTO;
+import co.edu.mintic.dto.TokenDTO;
 
 public class ProductosMed {
 
 	private HttpURLConnection httpCon;
-	private String authStr;
+	//private String authStr;
 	
 
 	public ProductosMed() {
 		super();
-		this.authStr = "Basic "+Base64.getEncoder().encodeToString("team1G4:T34m1G4*".getBytes());
+		//this.authStr = "Basic "+Base64.getEncoder().encodeToString("team1G4:T34m1G4*".getBytes());
 	}
 
 	public ArrayList<Object> parsingProductos(String json) throws ParseException {
@@ -35,12 +37,13 @@ public class ProductosMed {
 		while (i.hasNext()) {
 			JSONObject innerObj = (JSONObject) i.next();
 			ProductosDTO producto = new ProductosDTO();
-			producto.setCodigoProducto(Integer.parseInt(innerObj.get("codigoProducto").toString()));
-			producto.setNitProveedor(Integer.parseInt(((JSONObject)innerObj.get("proveedor")).get("nitProveedor").toString()));
-			producto.setIvaCompra(Double.parseDouble(innerObj.get("ivaCompra").toString()));
-			producto.setNombreProducto(innerObj.get("nombreProducto").toString());
-			producto.setPrecioCompra(Double.parseDouble(innerObj.get("precioCompra").toString()));
-			producto.setPrecioVenta (Double.parseDouble(innerObj.get("precioVenta").toString()));
+			producto.setCodigoProducto(Integer.parseInt(innerObj.get("productCode").toString()));
+			producto.setNitProveedor(Integer.parseInt(innerObj.get("nitSupplier").toString()));
+			producto.setIvaCompra(Double.parseDouble(innerObj.get("iva_item").toString()));
+			producto.setNombreProducto(innerObj.get("productName").toString());
+			producto.setPrecioCompra(Double.parseDouble(innerObj.get("pricePurchase").toString()));
+			producto.setPrecioVenta (Double.parseDouble(innerObj.get("priceToBuy").toString()));
+			producto.setId(innerObj.get("id").toString());
 			lista.add(producto);
 		}
 		return lista;
@@ -52,24 +55,30 @@ public class ProductosMed {
 		JSONObject innerObj = (JSONObject) jsonParser.parse(json);
 		if (innerObj != null && !innerObj.isEmpty()) {
 			producto = new ProductosDTO();
-			producto.setCodigoProducto(Integer.parseInt(innerObj.get("codigoProducto").toString()));
-			producto.setNitProveedor(Integer.parseInt(((JSONObject)innerObj.get("proveedor")).get("nitProveedor").toString()));
-			producto.setIvaCompra(Double.parseDouble(innerObj.get("ivaCompra").toString()));
-			producto.setNombreProducto(innerObj.get("nombreProducto").toString());
-			producto.setPrecioCompra(Double.parseDouble(innerObj.get("precioCompra").toString()));
-			producto.setPrecioVenta (Double.parseDouble(innerObj.get("precioVenta").toString()));
-		
+			producto.setCodigoProducto(Integer.parseInt(innerObj.get("productCode").toString()));
+			producto.setNitProveedor(Integer.parseInt(innerObj.get("nitSupplier").toString()));
+			producto.setIvaCompra(Double.parseDouble(innerObj.get("iva_item").toString()));
+			producto.setNombreProducto(innerObj.get("productName").toString());
+			producto.setPrecioCompra(Double.parseDouble(innerObj.get("pricePurchase").toString()));
+			producto.setPrecioVenta (Double.parseDouble(innerObj.get("priceToBuy").toString()));
+			producto.setId(innerObj.get("id").toString());		
 		}
 		return producto;
 	}
 
-	public ArrayList<Object> listar() throws Exception {
+	public ArrayList<Object> listar(TokenDTO tk) throws Exception {
 		ArrayList<Object> lista = null;
 		try {
-			httpCon = (HttpURLConnection) ConnectionRest.getConnection("productos/listar");
+			httpCon = (HttpURLConnection) ConnectionRest.getConnection("api/product/");
 			httpCon.setRequestMethod("GET");
 			httpCon.setRequestProperty("Accept", "application/json");
-			httpCon.setRequestProperty("Authorization", authStr);
+			httpCon.setRequestProperty("Authorization", tk.getBearer() +" "+tk.getToken());
+			
+			System.out.println("httpCon.getResponseCode()::>" + httpCon.getResponseCode());
+			if(httpCon.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND || httpCon.getResponseCode() == HttpURLConnection.HTTP_NO_CONTENT) {
+			   return null;
+			}
+			
 			InputStream respuesta = httpCon.getInputStream();
 			byte[] inp = respuesta.readAllBytes();
 			String json = "";
@@ -89,13 +98,19 @@ public class ProductosMed {
 		return lista;
 	}
 
-	public Object buscarById(long id) throws Exception {
+	public Object buscarById(long id,TokenDTO tk) throws Exception {
 		Object usr = null;
 		try {
-			httpCon = (HttpURLConnection) ConnectionRest.getConnection("productos/buscar/"+id);
+			httpCon = (HttpURLConnection) ConnectionRest.getConnection("api/product/code/"+id);
 			httpCon.setRequestMethod("GET");
 			httpCon.setRequestProperty("Accept", "application/json");
-			httpCon.setRequestProperty("Authorization", authStr);
+			httpCon.setRequestProperty("Authorization", tk.getBearer() +" "+tk.getToken());
+			
+			System.out.println("httpCon.getResponseCode()::>" + httpCon.getResponseCode());
+			if(httpCon.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
+			   return null;
+			}
+			
 			InputStream respuesta = httpCon.getInputStream();
 			byte[] inp = respuesta.readAllBytes();
 			String json = "";
@@ -122,15 +137,18 @@ public class ProductosMed {
 	public void crear(Object producto) throws Exception {
 
 		try {
-			if (buscarById(((ProductosDTO)producto).getCodigoProducto()) == null) {
-				httpCon = (HttpURLConnection) ConnectionRest.getConnection("productos/crear");
+			System.out.println("((ProductosDTO)producto).getCodigoProducto()::>"+((ProductosDTO)producto).getCodigoProducto());
+			System.out.println("((ProductosDTO)producto).getToken()::>"+((ProductosDTO)producto).getToken());
+			if (buscarById(((ProductosDTO)producto).getCodigoProducto(),((ProductosDTO)producto).getToken() ) == null) {
+				httpCon = (HttpURLConnection) ConnectionRest.getConnection("api/product/");
 				httpCon.setRequestMethod("POST");
 				httpCon.setDoOutput(true);
 				httpCon.setRequestProperty("Accept", "application/json");
 				httpCon.setRequestProperty("Content-Type", "application/json");
-				httpCon.setRequestProperty("Authorization", authStr);
+				httpCon.setRequestProperty("Authorization",  ((ProductosDTO)producto).getToken().getBearer() +" "+((ProductosDTO)producto).getToken().getToken());
 				
 				String data = ((ProductosDTO) producto).toString();
+				System.out.println("Data Agregar::>>"+data);
 				byte[] out = data.getBytes(StandardCharsets.UTF_8);
 				OutputStream stream = httpCon.getOutputStream();
 				stream.write(out);
@@ -155,14 +173,15 @@ public class ProductosMed {
 	public void actualizar(Object producto) throws Exception {
 
 		try {
-			httpCon = (HttpURLConnection) ConnectionRest.getConnection("productos/actualizar");
+			httpCon = (HttpURLConnection) ConnectionRest.getConnection("api/product/"+((ProductosDTO)producto).getId());
 			httpCon.setRequestMethod("PUT");
 			httpCon.setDoOutput(true);
 			httpCon.setRequestProperty("Accept", "application/json");
 			httpCon.setRequestProperty("Content-Type", "application/json");
-			httpCon.setRequestProperty("Authorization", authStr);
+			httpCon.setRequestProperty("Authorization", ((ProductosDTO)producto).getToken().getBearer() +" "+((ProductosDTO)producto).getToken().getToken()	);
 
 			String data = ((ProductosDTO) producto).toString();
+			System.out.println("data Actualizar::>"+data);
 			byte[] out = data.getBytes(StandardCharsets.UTF_8);
 			OutputStream stream = httpCon.getOutputStream();
 			stream.write(out);
@@ -184,18 +203,19 @@ public class ProductosMed {
 	public void eliminar(Object producto) throws Exception {
 
 		try {
-			httpCon = (HttpURLConnection) ConnectionRest.getConnection("productos/eliminar");
+			httpCon = (HttpURLConnection) ConnectionRest.getConnection("api/product/"+((ProductosDTO)producto).getId());
 			httpCon.setRequestMethod("DELETE");
 			httpCon.setDoOutput(true);
 			httpCon.setRequestProperty("Accept", "application/json");
 			httpCon.setRequestProperty("Content-Type", "application/json");
-			httpCon.setRequestProperty("Authorization", authStr);
+			httpCon.setRequestProperty("Authorization",  ((ProductosDTO)producto).getToken().getBearer() +" "+((ProductosDTO)producto).getToken().getToken()	);
 			
-		    String data = ((ProductosDTO) producto).toString(); 
-		    System.out.println("Data = "+data);
-			byte[] out = data.getBytes(StandardCharsets.UTF_8);
-			OutputStream stream = httpCon.getOutputStream();
-			stream.write(out);
+		    //String data = ((ProductosDTO) producto).toString(); 
+			//System.out.println("Data = "+data);
+			//byte[] out = data.getBytes(StandardCharsets.UTF_8);
+			//OutputStream stream = httpCon.getOutputStream();
+			//stream.write(out);
+			
 			if (httpCon.getResponseCode() != HttpURLConnection.HTTP_OK) {
 				System.err.println("Error al eliminar el producto::>" + httpCon.getResponseCode() + "<::>"
 						+ httpCon.getResponseMessage());
